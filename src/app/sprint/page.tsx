@@ -26,22 +26,6 @@ export default function SprintPage() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [_, setSessionData] = useSessionStorage<SessionData | null>('mindtype-session', null);
 
-  const startSprint = useCallback(() => {
-    setStatus('typing');
-    setTimeLeft(SPRINT_DURATION);
-    if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          if (timerRef.current) clearInterval(timerRef.current);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    textareaRef.current?.focus();
-  }, []);
-
   const handleFinish = useCallback(async () => {
     setStatus('finished');
     if (timerRef.current) {
@@ -76,17 +60,30 @@ export default function SprintPage() {
     }
   }, [text, router, toast, setSessionData]);
 
+  const startSprint = useCallback(() => {
+    setStatus('typing');
+    setTimeLeft(SPRINT_DURATION);
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          if (timerRef.current) clearInterval(timerRef.current);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    textareaRef.current?.focus();
+  }, []);
+
   useEffect(() => {
     if (timeLeft <= 0 && status === 'typing') {
       handleFinish();
     }
   }, [timeLeft, status, handleFinish]);
-
+  
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (status === 'idle' && e.key.length === 1 && !e.ctrlKey && !e.metaKey) { // Start on any character key press
-        startSprint();
-      }
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         if (text.length > 10) handleFinish();
@@ -99,7 +96,7 @@ export default function SprintPage() {
         clearInterval(timerRef.current);
       }
     };
-  }, [status, startSprint, text, handleFinish]);
+  }, [text, handleFinish]);
 
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
