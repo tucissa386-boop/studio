@@ -20,6 +20,6 @@ export type HistoryEntry = {
   date: string;
   time: string;
   snippet: string;
-  emotion: 'Anxious' | 'Energetic' | 'Reflective' | 'Confused';
-  color: 'orange' | 'green' | 'purple' | 'gray';
+  emotion: 'Anxious' | 'Energetic' | 'Reflective' | 'Confused' | 'Calm';
+  color: 'anxious' | 'energetic' | 'reflective' | 'confused' | 'calm';
 };

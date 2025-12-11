@@ -23,24 +23,26 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 
 const mockHistory: HistoryEntry[] = [
-    { id: '1', date: 'Oct 24, 2023', time: '10:42 PM', snippet: "I feel like I'm running out of time but I know that's just a perception...", emotion: 'Anxious', color: 'orange' },
-    { id: '2', date: 'Oct 23, 2023', time: '08:15 AM', snippet: "The morning light is hitting the desk and suddenly everything feels possible again...", emotion: 'Energetic', color: 'green' },
-    { id: '3', date: 'Oct 21, 2023', time: '11:30 PM', snippet: "Why did I say that? It keeps replaying in my head over and over...", emotion: 'Reflective', color: 'purple' },
-    { id: '4', date: 'Oct 19, 2023', time: '02:45 PM', snippet: "Stuck on this problem. Can't seem to find a way around the...", emotion: 'Confused', color: 'gray' },
+    { id: '1', date: 'Oct 24, 2023', time: '10:42 PM', snippet: "I feel like I'm running out of time but I know that's just a perception...", emotion: 'Anxious', color: 'anxious' },
+    { id: '2', date: 'Oct 23, 2023', time: '08:15 AM', snippet: "The morning light is hitting the desk and suddenly everything feels possible again...", emotion: 'Energetic', color: 'energetic' },
+    { id: '3', date: 'Oct 21, 2023', time: '11:30 PM', snippet: "Why did I say that? It keeps replaying in my head over and over...", emotion: 'Reflective', color: 'reflective' },
+    { id: '4', date: 'Oct 19, 2023', time: '02:45 PM', snippet: "Stuck on this problem. Can't seem to find a way around the...", emotion: 'Confused', color: 'confused' },
 ];
 
-const emotionColors = {
-  Anxious: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
-  Energetic: 'bg-green-500/10 text-green-400 border-green-500/20',
-  Reflective: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-  Confused: 'bg-gray-500/10 text-gray-400 border-gray-500/20',
+const emotionColors: Record<HistoryEntry['color'], string> = {
+  anxious: 'bg-red-500/10 text-red-400 border-red-500/20',
+  energetic: 'bg-green-500/10 text-green-400 border-green-500/20',
+  reflective: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+  confused: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
+  calm: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
 };
 
-const emotionDotColors = {
-  Anxious: 'bg-orange-500',
-  Energetic: 'bg-green-500',
-  Reflective: 'bg-purple-500',
-  Confused: 'bg-gray-500',
+const emotionDotColors: Record<HistoryEntry['color'], string> = {
+  anxious: 'bg-red-500',
+  energetic: 'bg-green-500',
+  reflective: 'bg-purple-500',
+  confused: 'bg-yellow-500',
+  calm: 'bg-blue-500',
 };
 
 
@@ -174,8 +176,8 @@ function HistoryCard({item}: {item: HistoryEntry}) {
                 </p>
             </div>
             <div className="flex items-center justify-between sm:justify-end gap-6 sm:w-auto shrink-0">
-                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${emotionColors[item.emotion]}`}>
-                    <span className={`size-1.5 rounded-full ${emotionDotColors[item.emotion]}`}></span>
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${emotionColors[item.color]}`}>
+                    <span className={`size-1.5 rounded-full ${emotionDotColors[item.color]}`}></span>
                     {item.emotion}
                 </span>
                 <Button variant="ghost" size="icon" className="text-primary opacity-0 group-hover:opacity-100">

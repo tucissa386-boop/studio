@@ -140,13 +140,13 @@ function KpiGrid({ kpis }: { kpis: SessionData['kpis'] }) {
 
 function RawStreamCard({ rawText, highlights }: { rawText: string; highlights: SessionData['highlights'] }) {
   const highlightedText = useMemo(() => {
-    let parts = [rawText];
+    let parts: (string | JSX.Element)[] = [rawText];
     if (!highlights?.patterns) return [rawText];
     
     const colors = ["bg-red-500/20 text-red-300 border-red-500/50", "bg-blue-500/20 text-blue-300 border-blue-500/50", "bg-purple-500/20 text-purple-300 border-purple-500/50"];
 
     highlights.patterns.forEach((p, i) => {
-      let newParts: (string | JSX.Element)[] = [];
+      const newParts: (string | JSX.Element)[] = [];
       parts.forEach(part => {
         if (typeof part === 'string') {
           const splitText = part.split(p.example);
@@ -258,12 +258,12 @@ function PatternsChart({ patterns }: { patterns: string[] }) {
 
 function MicroThoughtBreakdown({ highlights }: { highlights: SessionData['highlights'] }) {
   const badgeColors: Record<string, string> = {
-    insecurity: 'bg-red-100 text-red-800 dark:bg-red-500/10 dark:text-red-400',
-    'imposter syndrome': 'bg-purple-100 text-purple-800 dark:bg-purple-500/10 dark:text-purple-400',
-    'problem solving': 'bg-blue-100 text-blue-800 dark:bg-blue-500/10 dark:text-blue-400',
-    hope: 'bg-green-100 text-green-800 dark:bg-green-500/10 dark:text-green-400',
-    'victim mindset': 'bg-purple-100 text-purple-800 dark:bg-purple-500/10 dark:text-purple-400',
-    'self-criticism': 'bg-orange-100 text-orange-800 dark:bg-orange-500/10 dark:text-orange-400',
+    insecurity: 'bg-red-500/10 text-red-400 border-red-500/20',
+    'imposter syndrome': 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+    'problem solving': 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+    hope: 'bg-green-500/10 text-green-400 border-green-500/20',
+    'victim mindset': 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+    'self-criticism': 'bg-orange-500/10 text-orange-400 border-orange-500/20',
     default: 'bg-muted text-muted-foreground',
   };
 
