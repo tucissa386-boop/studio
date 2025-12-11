@@ -32,8 +32,9 @@ export default function SprintPage() {
     setStatus('analyzing');
     if (timerRef.current) {
       clearInterval(timerRef.current);
+      timerRef.current = null;
     }
-    
+
     try {
       const currentText = textareaRef.current?.value || '';
       const result = await performAnalysis(currentText);
@@ -63,11 +64,8 @@ export default function SprintPage() {
     }
   }, [router, toast, setSessionData, status]);
 
-  const startSprint = useCallback(() => {
-    if (status === 'idle' && timerRef.current === null) {
-      setStatus('typing');
-      textareaRef.current?.focus();
-      
+  useEffect(() => {
+    if (status === 'typing' && !timerRef.current) {
       timerRef.current = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
@@ -79,11 +77,17 @@ export default function SprintPage() {
         });
       }, 1000);
     }
+
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
   }, [status]);
 
-
   useEffect(() => {
-    if (timeLeft <= 0 && status === 'typing') {
+    if (timeLeft === 0 && status === 'typing') {
       handleFinish();
     }
   }, [timeLeft, status, handleFinish]);
@@ -100,17 +104,13 @@ export default function SprintPage() {
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
     };
   }, [handleFinish]);
-
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newText = e.target.value;
     if (status === 'idle' && newText.length > 0) {
-      startSprint();
+      setStatus('typing');
     }
     if (status !== 'finished' && status !== 'analyzing') {
       setText(newText);
@@ -119,7 +119,6 @@ export default function SprintPage() {
 
   const progress = (timeLeft / SPRINT_DURATION) * 100;
   const circularProgress = 100 - progress;
-
 
   return (
     <div className="bg-background min-h-screen flex flex-col font-display selection:bg-primary selection:text-white overflow-hidden">
