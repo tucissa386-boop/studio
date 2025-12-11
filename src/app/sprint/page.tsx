@@ -37,6 +37,18 @@ export default function SprintPage() {
 
     try {
       const currentText = textareaRef.current?.value || '';
+      if (currentText.trim().length < 10) {
+        toast({
+            variant: 'destructive',
+            title: 'Not enough text',
+            description: 'Please write a bit more before analyzing.',
+        });
+        setStatus('idle');
+        setTimeLeft(SPRINT_DURATION);
+        setText('');
+        return;
+      }
+      
       const result = await performAnalysis(currentText);
       const newSession: SessionData = {
         id: new Date().toISOString(),
@@ -65,32 +77,33 @@ export default function SprintPage() {
   }, [router, toast, setSessionData, status]);
 
   useEffect(() => {
-    if (status === 'typing' && !timerRef.current) {
-      timerRef.current = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
-            clearInterval(timerRef.current!);
-            timerRef.current = null;
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+    if (status !== 'typing') {
+      return;
     }
+    
+    // Clear any existing timer
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+
+    timerRef.current = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current!);
+          timerRef.current = null;
+          handleFinish();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
 
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
-        timerRef.current = null;
       }
     };
-  }, [status]);
-
-  useEffect(() => {
-    if (timeLeft === 0 && status === 'typing') {
-      handleFinish();
-    }
-  }, [timeLeft, status, handleFinish]);
+  }, [status, handleFinish]);
   
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
