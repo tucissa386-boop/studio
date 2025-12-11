@@ -15,7 +15,7 @@ import {
   Filter,
   ArrowRight,
   ChevronDown,
-  TextSnippet,
+  FileText,
 } from 'lucide-react';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from '@/components/ui/chart';
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
@@ -161,7 +161,7 @@ function HistoryCard({item}: {item: HistoryEntry}) {
         <Card className="group hover:bg-accent/50 transition-all p-4 sm:p-5 flex flex-col sm:flex-row gap-4 sm:items-center cursor-pointer border hover:border-primary/30">
             <div className="flex items-center gap-4 sm:w-48 shrink-0">
                 <div className="bg-primary/10 text-primary p-2.5 rounded-lg">
-                    <TextSnippet />
+                    <FileText />
                 </div>
                 <div className="flex flex-col">
                     <span className="text-foreground font-bold text-sm">{item.date}</span>
