@@ -33,7 +33,8 @@ export default function SprintPage() {
     }
     setStatus('analyzing');
     try {
-      const result = await performAnalysis(text);
+      // Use a function to get the latest text state, avoiding stale closures
+      const result = await performAnalysis(textareaRef.current?.value || '');
       const newSession: SessionData = {
         id: new Date().toISOString(),
         date: new Date().toISOString(),
@@ -43,7 +44,7 @@ export default function SprintPage() {
         kpis: {
           cognitiveLoad: 'High',
           sentimentScore: 'Neutral',
-          wordCount: text.split(/\s+/).filter(Boolean).length,
+          wordCount: (textareaRef.current?.value || '').split(/\s+/).filter(Boolean).length,
           focusLevel: 85,
         },
       };
@@ -58,23 +59,36 @@ export default function SprintPage() {
       });
       setStatus('error');
     }
-  }, [text, router, toast, setSessionData]);
+  }, [router, toast, setSessionData]);
 
   const startSprint = useCallback(() => {
-    setStatus('typing');
-    setTimeLeft(SPRINT_DURATION);
-    if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          if (timerRef.current) clearInterval(timerRef.current);
-          return 0;
+    if (status === 'idle') {
+        setStatus('typing');
+        textareaRef.current?.focus();
+    }
+  }, [status]);
+
+
+  useEffect(() => {
+    if (status === 'typing') {
+      timerRef.current = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(timerRef.current!);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    
+    return () => {
+        if (timerRef.current) {
+            clearInterval(timerRef.current);
         }
-        return prev - 1;
-      });
-    }, 1000);
-    textareaRef.current?.focus();
-  }, []);
+    };
+  }, [status]);
+
 
   useEffect(() => {
     if (timeLeft <= 0 && status === 'typing') {
@@ -86,17 +100,16 @@ export default function SprintPage() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
-        if (text.length > 10) handleFinish();
+        if ((textareaRef.current?.value.length || 0) > 10) {
+            handleFinish();
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
     };
-  }, [text, handleFinish]);
+  }, [handleFinish]);
 
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
