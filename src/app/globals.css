@@ -51,11 +51,17 @@
     --border: 248 17% 19%;
     --input: 248 17% 19%;
     --ring: 271 76% 53%;
-    --chart-1: 340 75% 55%;
-    --chart-2: 27 87% 67%;
-    --chart-3: 120 60% 50%;
-    --chart-4: 271 70% 60%;
-    --chart-5: 210 80% 60%;
+
+    /* Custom Personal Colors */
+    --primary-dark: 190 95% 68%; /* A vibrant teal */
+    --secondary-dark: 290 80% 75%; /* A soft lavender */
+    --accent-dark: 340 85% 70%; /* A warm coral */
+
+    --chart-1: 190 95% 68%;
+    --chart-2: 290 80% 75%;
+    --chart-3: 340 85% 70%;
+    --chart-4: 220 85% 70%;
+    --chart-5: 160 80% 65%;
   }
 }
 

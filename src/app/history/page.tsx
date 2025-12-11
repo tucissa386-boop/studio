@@ -30,19 +30,19 @@ const mockHistory: HistoryEntry[] = [
 ];
 
 const emotionColors: Record<HistoryEntry['color'], string> = {
-  anxious: 'bg-red-500/10 text-red-400 border-red-500/20',
+  anxious: 'bg-primary-dark/10 text-primary-dark border-primary-dark/20',
   energetic: 'bg-green-500/10 text-green-400 border-green-500/20',
-  reflective: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+  reflective: 'bg-accent-dark/10 text-accent-dark border-accent-dark/20',
   confused: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
-  calm: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+  calm: 'bg-secondary-dark/10 text-secondary-dark border-secondary-dark/20',
 };
 
 const emotionDotColors: Record<HistoryEntry['color'], string> = {
-  anxious: 'bg-red-500',
+  anxious: 'bg-primary-dark',
   energetic: 'bg-green-500',
-  reflective: 'bg-purple-500',
+  reflective: 'bg-accent-dark',
   confused: 'bg-yellow-500',
-  calm: 'bg-blue-500',
+  calm: 'bg-secondary-dark',
 };
 
 
@@ -57,7 +57,7 @@ const chartData = [
 ];
 
 const chartConfig = {
-  desktop: { label: "Sentiment", color: "hsl(var(--primary))" },
+  desktop: { label: "Sentiment", color: "hsl(var(--primary-dark))" },
 } satisfies ChartConfig;
 
 export default function HistoryPage() {
@@ -85,7 +85,7 @@ export default function HistoryPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <StatCard icon={History} title="Total Sessions" value="42" change="+12%" changeColor="text-green-500" />
             <StatCard icon={Smile} title="Avg. Sentiment" value="Positive" change="+5%" changeColor="text-green-500" />
-            <StatCard icon={Zap} title="Top Emotion" value="Anxious" change="High Focus" changeColor="text-primary" />
+            <StatCard icon={Zap} title="Top Emotion" value="Anxious" change="High Focus" changeColor="text-primary-dark" />
           </div>
 
           <Card className="p-6 flex flex-col gap-6">
@@ -113,7 +113,7 @@ export default function HistoryPage() {
                 <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)"/>
                 <XAxis dataKey="month" tickLine={false} axisLine={false} stroke="" tickMargin={8} tickFormatter={(value) => value.slice(0, 6)} />
                 <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel indicator="line" />} />
-                <Area dataKey="desktop" type="natural" fill="hsl(var(--primary) / 0.3)" fillOpacity={0.4} stroke="hsl(var(--primary))" stackId="a" />
+                <Area dataKey="desktop" type="natural" fill="hsl(var(--primary-dark) / 0.3)" fillOpacity={0.4} stroke="hsl(var(--primary-dark))" stackId="a" />
               </AreaChart>
             </ChartContainer>
           </Card>
@@ -176,7 +176,7 @@ function HistoryCard({item}: {item: HistoryEntry}) {
                 </p>
             </div>
             <div className="flex items-center justify-between sm:justify-end gap-6 sm:w-auto shrink-0">
-                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${emotionColors[item.color]}`}>
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${emotionColors[item.color]}`}>
                     <span className={`size-1.5 rounded-full ${emotionDotColors[item.color]}`}></span>
                     {item.emotion}
                 </span>

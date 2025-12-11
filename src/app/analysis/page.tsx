@@ -143,7 +143,7 @@ function RawStreamCard({ rawText, highlights }: { rawText: string; highlights: S
     let parts: (string | JSX.Element)[] = [rawText];
     if (!highlights?.patterns) return [rawText];
     
-    const colors = ["bg-red-500/20 text-red-300 border-red-500/50", "bg-blue-500/20 text-blue-300 border-blue-500/50", "bg-purple-500/20 text-purple-300 border-purple-500/50"];
+    const colors = ["bg-primary-dark/20 text-primary-dark border-primary-dark/50", "bg-accent-dark/20 text-accent-dark border-accent-dark/50", "bg-secondary-dark/20 text-secondary-dark border-secondary-dark/50"];
 
     highlights.patterns.forEach((p, i) => {
       const newParts: (string | JSX.Element)[] = [];
@@ -258,8 +258,8 @@ function PatternsChart({ patterns }: { patterns: string[] }) {
 
 function MicroThoughtBreakdown({ highlights }: { highlights: SessionData['highlights'] }) {
   const badgeColors: Record<string, string> = {
-    insecurity: 'bg-red-500/10 text-red-400 border-red-500/20',
-    'imposter syndrome': 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+    insecurity: 'bg-primary-dark/10 text-primary-dark border-primary-dark/20',
+    'imposter syndrome': 'bg-accent-dark/10 text-accent-dark border-accent-dark/20',
     'problem solving': 'bg-blue-500/10 text-blue-400 border-blue-500/20',
     hope: 'bg-green-500/10 text-green-400 border-green-500/20',
     'victim mindset': 'bg-purple-500/10 text-purple-400 border-purple-500/20',
@@ -278,7 +278,7 @@ function MicroThoughtBreakdown({ highlights }: { highlights: SessionData['highli
           <div key={index} className="p-4 hover:bg-muted/50 transition-colors group">
             <div className="flex justify-between items-start gap-4 mb-2">
               <div className="flex flex-wrap gap-2">
-                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badgeColors[item.pattern.toLowerCase()] || badgeColors.default}`}>
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${badgeColors[item.pattern.toLowerCase()] || badgeColors.default}`}>
                   {item.pattern}
                 </span>
               </div>
