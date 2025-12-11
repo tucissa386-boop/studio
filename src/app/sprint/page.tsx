@@ -30,8 +30,15 @@ export default function SprintPage() {
     if (status === 'idle') {
       setStatus('typing');
       setTimeLeft(SPRINT_DURATION);
+      if (timerRef.current) clearInterval(timerRef.current); // Clear any existing timer
       timerRef.current = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            if (timerRef.current) clearInterval(timerRef.current);
+            return 0;
+          }
+          return prev - 1;
+        });
       }, 1000);
       textareaRef.current?.focus();
     }
@@ -79,7 +86,7 @@ export default function SprintPage() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (status === 'idle') {
+      if (status === 'idle' && e.key.length === 1) { // Start on any character key press
         startSprint();
       }
       if (e.key === 'Enter' && !e.shiftKey) {
@@ -96,17 +103,19 @@ export default function SprintPage() {
     };
   }, [status, startSprint, text, handleFinish]);
 
-  const progress = (timeLeft / SPRINT_DURATION) * 100;
-  const circularProgress = 100 - progress;
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if(status === 'idle') {
-        startSprint();
+    if (status === 'idle' && e.target.value.length > 0) {
+      startSprint();
     }
     if (status !== 'finished' && status !== 'analyzing') {
       setText(e.target.value);
     }
   };
+
+  const progress = (timeLeft / SPRINT_DURATION) * 100;
+  const circularProgress = 100 - progress;
+
 
   return (
     <div className="bg-background min-h-screen flex flex-col font-display selection:bg-primary selection:text-white overflow-hidden">
