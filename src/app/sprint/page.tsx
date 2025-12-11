@@ -27,14 +27,16 @@ export default function SprintPage() {
   const [_, setSessionData] = useSessionStorage<SessionData | null>('mindtype-session', null);
 
   const handleFinish = useCallback(async () => {
-    setStatus('finished');
+    if (status === 'analyzing' || status === 'finished') return;
+
+    setStatus('analyzing');
     if (timerRef.current) {
       clearInterval(timerRef.current);
     }
-    setStatus('analyzing');
+    
     try {
-      // Use a function to get the latest text state, avoiding stale closures
-      const result = await performAnalysis(textareaRef.current?.value || '');
+      const currentText = textareaRef.current?.value || '';
+      const result = await performAnalysis(currentText);
       const newSession: SessionData = {
         id: new Date().toISOString(),
         date: new Date().toISOString(),
@@ -44,7 +46,7 @@ export default function SprintPage() {
         kpis: {
           cognitiveLoad: 'High',
           sentimentScore: 'Neutral',
-          wordCount: (textareaRef.current?.value || '').split(/\s+/).filter(Boolean).length,
+          wordCount: currentText.split(/\s+/).filter(Boolean).length,
           focusLevel: 85,
         },
       };
@@ -59,34 +61,24 @@ export default function SprintPage() {
       });
       setStatus('error');
     }
-  }, [router, toast, setSessionData]);
+  }, [router, toast, setSessionData, status]);
 
   const startSprint = useCallback(() => {
-    if (status === 'idle') {
-        setStatus('typing');
-        textareaRef.current?.focus();
-    }
-  }, [status]);
-
-
-  useEffect(() => {
-    if (status === 'typing') {
+    if (status === 'idle' && timerRef.current === null) {
+      setStatus('typing');
+      textareaRef.current?.focus();
+      
       timerRef.current = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
             clearInterval(timerRef.current!);
+            timerRef.current = null;
             return 0;
           }
           return prev - 1;
         });
       }, 1000);
     }
-    
-    return () => {
-        if (timerRef.current) {
-            clearInterval(timerRef.current);
-        }
-    };
   }, [status]);
 
 
@@ -108,16 +100,20 @@ export default function SprintPage() {
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
     };
   }, [handleFinish]);
 
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (status === 'idle' && e.target.value.length > 0) {
+    const newText = e.target.value;
+    if (status === 'idle' && newText.length > 0) {
       startSprint();
     }
     if (status !== 'finished' && status !== 'analyzing') {
-      setText(e.target.value);
+      setText(newText);
     }
   };
 
@@ -198,8 +194,8 @@ export default function SprintPage() {
               <div
                 className="absolute top-0 left-0 h-full bg-primary shadow-[0_0_15px_hsl(var(--primary)/0.8)] origin-left"
                 style={{
-                    transform: `scaleX(${status === 'typing' ? 0 : 1})`,
-                    transition: status === 'typing' ? `transform ${SPRINT_DURATION}s linear` : 'none',
+                    transform: `scaleX(${status === 'typing' ? 1 - (timeLeft/SPRINT_DURATION) : (status === 'idle' ? 0 : 1)})`,
+                    transition: status === 'typing' ? `transform 1s linear` : 'none',
                 }}
               ></div>
             </div>
