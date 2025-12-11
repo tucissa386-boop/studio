@@ -27,22 +27,20 @@ export default function SprintPage() {
   const [_, setSessionData] = useSessionStorage<SessionData | null>('mindtype-session', null);
 
   const startSprint = useCallback(() => {
-    if (status === 'idle') {
-      setStatus('typing');
-      setTimeLeft(SPRINT_DURATION);
-      if (timerRef.current) clearInterval(timerRef.current); // Clear any existing timer
-      timerRef.current = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
-            if (timerRef.current) clearInterval(timerRef.current);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      textareaRef.current?.focus();
-    }
-  }, [status]);
+    setStatus('typing');
+    setTimeLeft(SPRINT_DURATION);
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          if (timerRef.current) clearInterval(timerRef.current);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    textareaRef.current?.focus();
+  }, []);
 
   const handleFinish = useCallback(async () => {
     setStatus('finished');
@@ -86,7 +84,7 @@ export default function SprintPage() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (status === 'idle' && e.key.length === 1) { // Start on any character key press
+      if (status === 'idle' && e.key.length === 1 && !e.ctrlKey && !e.metaKey) { // Start on any character key press
         startSprint();
       }
       if (e.key === 'Enter' && !e.shiftKey) {
